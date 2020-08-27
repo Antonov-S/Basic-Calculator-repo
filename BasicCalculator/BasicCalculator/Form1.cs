@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace BasicCalculator
@@ -239,8 +240,81 @@ namespace BasicCalculator
         private void CalculateEquation()
         {
             // TODO: finish!
+            var userInput = this.UserInputText.Text;
+
+
+            // 3. Recursive functions
+            // 4. Switch steatments
+
+            this.CalculationResultText.Text = ParseOperation();
+            
             // Focus the user input text
             FocusInputText();
+        }
+
+        /// <summary>
+        /// Parses the users equation and calculate the result
+        /// </summary>
+        /// <returns></returns>
+        private string ParseOperation()
+        {
+            try
+            {
+                // Get the users equation input
+                var input = this.UserInputText.Text;
+
+                // Remove all spaces
+                input = input.Replace(" ", "");
+
+                // Create a new top-level operation
+                var Operation = new Operation();
+                var leftSide = true;
+
+                // Loop through each charecter of the input
+                // starting from the left to the right
+                for (int i = 0; i < input.Length; i++)
+                {
+                    // TODO: Handle order priority
+                    //       4 + 5 * 3
+                    //       It shoud calculate 5*3, then 4 + result (so 4 + 15)
+
+                    // Check if the current charecter is a number
+                    if ("0123456789.".Any(c => input[i] == c))
+                    {
+                        if (leftSide)
+                        {
+                            Operation.LeftSide = AddNumberPart(Operation.LeftSide, input[i]);
+                        }
+                    }
+                }
+
+                return string.Empty;
+            }
+            catch(Exception ex)
+            {
+                return $"Invalid equation. {ex.Message}";
+            }
+        }
+
+        /// <summary>
+        /// Attempts to add a new character to the current number, checks for valid characters as it goes
+        /// </summary>
+        /// <param name="currentNumber">The current number string</param>
+        /// <param name="newCharacter">The new character to append to the string</param>
+        /// <returns></returns>
+        private string AddNumberPart(string currentNumber, char newCharacter)
+        {
+            // Check if there is already a . in the number
+            if (newCharacter == '.' && currentNumber.Contains('.'))
+            {
+                throw new InvalidOperationException($"Number {currentNumber} already contains a . and another cannot be added");
+            }
+            else
+            {
+                return currentNumber + newCharacter;
+            }
+
+
         }
         #endregion
     }
